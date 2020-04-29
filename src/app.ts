@@ -9,6 +9,7 @@ import passport from "passport";
 import session from "express-session";
 import mongoose from "mongoose";
 import foodRouter from "./api/routers/foodRouter";
+import userRouter from "./api/routers/userRouter";
 
 const app = express();
 
@@ -35,6 +36,8 @@ app.use(passport.session());
 
 // 음식점, 카페, 술집 분류 예정
 app.use("/food", foodRouter);
+
+app.use("/user", userRouter);
 
 app.use(morgan("dev"));
 
