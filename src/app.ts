@@ -34,7 +34,7 @@ app.use(morgan("dev"));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 음식점, 카페, 술집 분류 예정
+// storeType 으로 음식점, 카페, 술집 분류 예정
 app.use("/food", foodRouter);
 
 app.use("/user", userRouter);
