@@ -15,7 +15,10 @@ const UserSchema: mongoose.PassportLocalSchema = new mongoose.Schema({
   googleEmail: String,
   githubEmail: String,
   kakaoEmail: String,
-  username: String,
+  username: {
+    required: "Username is required",
+    type: String,
+  },
   store: [
     {
       ref: "Store",
