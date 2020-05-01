@@ -7,14 +7,12 @@ import {
   kakaoLoginCallback,
 } from "./api/controllers/userController";
 
-passport.use(User.createStrategy());
-
 passport.use(
   new GithubStrategy(
     {
       clientID: process.env.GH_ID,
       clientSecret: process.env.GH_SECRET,
-      callbackURL: `http://localhost:4000/auth/github/callback`,
+      callbackURL: `http://localhost:4000/user/auth/github/callback`,
     },
     githubLoginCallback
   )
@@ -25,11 +23,13 @@ passport.use(
     {
       clientID: process.env.KAKAO_KEY,
       clientSecret: process.env.KAKAO_SECRET,
-      callbackURL: `http://localhost:4000/auth/kakao/callback`,
+      callbackURL: `http://localhost:4000/user/auth/kakao/callback`,
     },
     kakaoLoginCallback
   )
 );
+
+passport.use(User.createStrategy());
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
