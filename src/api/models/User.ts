@@ -4,17 +4,13 @@ import passportLocalMongoose from "passport-local-mongoose";
 export interface IUser extends mongoose.Document {
   _id: string;
   avatarUrl: string;
-  googleEmail: string;
-  githubEmail: string;
-  kakaoEmail: string;
+  email: string;
   username: string;
 }
 
 const UserSchema: mongoose.PassportLocalSchema = new mongoose.Schema({
   avatarUrl: String,
-  googleEmail: String,
-  githubEmail: String,
-  kakaoEmail: String,
+  email: String,
   username: {
     required: "Username is required",
     type: String,

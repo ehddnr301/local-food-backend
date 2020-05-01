@@ -27,19 +27,7 @@ userRouter.put("/:id", putUserInfo);
 // 유저를 제거합니다.
 userRouter.delete("/:id", deleteUser);
 
-// userRouter.get("/auth/github", githubLogin);
 userRouter.post("/auth/github", githubLogin);
-
-// userRouter.get(
-//   "/auth/github/callback",
-//   passport.authenticate("github", { failureRedirect: "http://localhost:3000" }),
-//   postGithubLogIn
-// );
-userRouter.post(
-  "/auth/github/callback",
-  passport.authenticate("github", { failureRedirect: "http://localhost:3000" }),
-  postGithubLogIn
-);
 
 userRouter.get("/auth/kakao", kakaoLogin);
 userRouter.get(

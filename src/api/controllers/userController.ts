@@ -30,7 +30,6 @@ export const githubLogin = async (req: Request, res: Response) => {
       }
     );
     const token = response.data.access_token;
-
     const {
       data: { email, login: username, avatar_url: avatarUrl },
     } = await axios.get("https://api.github.com/user", {
@@ -38,19 +37,19 @@ export const githubLogin = async (req: Request, res: Response) => {
         Authorization: `token ${token}`,
       },
     });
-    const user = await User.findOne({ email });
-    if (user) {
-      return res.redirect("http://localhost:3000");
+    if (email) {
+      const user = await User.findOne({ email });
+      if (user) {
+        res.json(user).end();
+      }
+    } else {
+      const newUser = await User.create({
+        email,
+        username,
+        avatarUrl,
+      });
+      res.json(newUser).end();
     }
-    const newUser = await User.create({
-      githubEmail: email,
-      username,
-      avatarUrl,
-    });
-
-    console.log(newUser);
-
-    // return res.json({ access_token });
   } catch (err) {
     console.log(err);
   }
