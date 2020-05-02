@@ -39,6 +39,7 @@ export const githubLogin = async (req: Request, res: Response) => {
     });
     if (email) {
       const user = await User.findOne({ email });
+      console.log(user);
       if (user) {
         res.json(user).end();
       }
@@ -53,17 +54,54 @@ export const githubLogin = async (req: Request, res: Response) => {
   } catch (err) {
     console.log(err);
   }
-
-  // GITHUB에서 제공하는 다양한 API에 접근할 수 있는 토큰 정보를 취득할 수 있습니다.
-
-  // data의 정보를 활용하여 자신의 애플리케이션에 필요한 정보를 DB에 저장해주세요.
-
-  // JWT 토큰을 발행합니다.
-  // const accessToken = await jwt.generate({ login: data.login, id: data.id });
-
-  // return res.json({ accessToken });
 };
-export const kakaoLogin = passport.authenticate("kakao");
+// export const kakaoLogin = passport.authenticate("kakao");
+
+export const kakaoLogin = async (req: Request, res: Response) => {
+  const { code } = req.body;
+  try {
+    const response = await axios.get(
+      `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${process.env.KAKAO_KEY}&redirect_uri=${process.env.KAKAO_CALLBACK}&code=${code}&client_secret=${process.env.KAKAO_SECRET}`
+    );
+    const {
+      data: { access_token },
+    } = response;
+    const profileRequest = await axios.get(
+      "https://kapi.kakao.com/v2/user/me",
+      {
+        headers: { Authorization: `Bearer ${access_token}` },
+      }
+    );
+    const {
+      data: {
+        properties: { nickname: username },
+        kakao_account: {
+          email,
+          profile: { profile_image_url: avatarUrl },
+        },
+      },
+    } = profileRequest;
+    if (email) {
+      const user = await User.findOne({ email });
+      console.log(user);
+      if (user) {
+        console.log("hi");
+        res.json(user).end();
+      } else {
+        console.log("hello");
+        const newUser = await User.create({
+          email,
+          username,
+          avatarUrl,
+        });
+        console.log(newUser);
+        res.json(newUser).end();
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 export const postGithubLogIn = (req: Request, res: Response) => {
   console.log("hi");

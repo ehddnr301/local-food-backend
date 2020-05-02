@@ -29,11 +29,6 @@ userRouter.delete("/:id", deleteUser);
 
 userRouter.post("/auth/github", githubLogin);
 
-userRouter.get("/auth/kakao", kakaoLogin);
-userRouter.get(
-  "/auth/kakao/callback",
-  passport.authenticate("kakao", { failureRedirect: "/login" }),
-  postKakaoLogIn
-);
+userRouter.post("/auth/kakao", kakaoLogin);
 
 export default userRouter;
