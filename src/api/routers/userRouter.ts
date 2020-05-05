@@ -6,8 +6,6 @@ import {
   getUserInfo,
   putUserInfo,
   deleteUser,
-  postGithubLogIn,
-  postKakaoLogIn,
   kakaoLogin,
   githubLogin,
 } from "../controllers/userController";

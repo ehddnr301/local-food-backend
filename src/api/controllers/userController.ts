@@ -42,6 +42,13 @@ export const githubLogin = async (req: Request, res: Response) => {
       console.log(user);
       if (user) {
         res.json(user).end();
+        const session = req.session;
+        session.loginInfo = {
+          id: user.id,
+          email,
+          username,
+          avatarUrl,
+        };
       }
     } else {
       const newUser = await User.create({
@@ -49,6 +56,13 @@ export const githubLogin = async (req: Request, res: Response) => {
         username,
         avatarUrl,
       });
+      const session = req.session;
+      session.loginInfo = {
+        id: newUser.id,
+        email,
+        username,
+        avatarUrl,
+      };
       res.json(newUser).end();
     }
   } catch (err) {
@@ -85,91 +99,31 @@ export const kakaoLogin = async (req: Request, res: Response) => {
       const user = await User.findOne({ email });
       console.log(user);
       if (user) {
-        console.log("hi");
+        const session = req.session;
+        session.loginInfo = {
+          id: user.id,
+          email,
+          username,
+          avatarUrl,
+        };
         res.json(user).end();
       } else {
-        console.log("hello");
         const newUser = await User.create({
           email,
           username,
           avatarUrl,
         });
-        console.log(newUser);
+        const session = req.session;
+        session.loginInfo = {
+          id: newUser.id,
+          email,
+          username,
+          avatarUrl,
+        };
         res.json(newUser).end();
       }
     }
   } catch (err) {
     console.log(err);
-  }
-};
-
-export const postGithubLogIn = (req: Request, res: Response) => {
-  console.log("hi");
-  res.redirect("/");
-};
-export const postKakaoLogIn = (req: Request, res: Response) => {
-  res.redirect("/");
-};
-
-export const githubLoginCallback = async (
-  _: any,
-  __: any,
-  profile: UserResponse,
-  cb: any
-) => {
-  console.log("hi");
-  const {
-    _json: { avatar_url, name, email },
-  } = profile;
-  try {
-    console.log("hi");
-    const user = await User.findOne({ email });
-    if (user) {
-      return cb(null, user);
-    }
-    const newUser = await User.create({
-      githubEmail: email,
-      username: name,
-      avatarUrl: avatar_url,
-    });
-    return cb(null, newUser);
-  } catch (error) {
-    return cb(error);
-  }
-};
-
-export const kakaoLoginCallback = async (
-  _: any,
-  __: any,
-  profile: KUserResponse,
-  cb: any
-) => {
-  const {
-    _raw,
-    _json: {
-      properties: { nickname },
-      kakao_account: { email },
-    },
-  } = profile;
-  let profileImage: string;
-  if (_raw.includes("profile_image_url")) {
-    const a = _raw.split(",");
-    const c = a.filter((b) => b.includes("profile_image_url"));
-    const d = c[0].split(":")[2].slice(0, -2);
-    profileImage = `http:${d}`;
-  }
-  try {
-    const user = await User.findOne({ email });
-    if (user) {
-      return cb(null, user);
-    }
-    const newUser = await User.create({
-      kakaoEmail: email,
-      username: nickname,
-      avatarUrl: profileImage,
-    });
-    return cb(null, newUser);
-  } catch (error) {
-    return cb(error);
   }
 };
