@@ -41,7 +41,7 @@ export const githubLogin = async (req: Request, res: Response) => {
       const user = await User.findOne({ email });
       console.log(user);
       if (user) {
-        res.json(user).end();
+        res.json(user.id).end();
         const session = req.session;
         session.loginInfo = {
           id: user.id,
@@ -63,13 +63,12 @@ export const githubLogin = async (req: Request, res: Response) => {
         username,
         avatarUrl,
       };
-      res.json(newUser).end();
+      res.json(newUser.id).end();
     }
   } catch (err) {
     console.log(err);
   }
 };
-// export const kakaoLogin = passport.authenticate("kakao");
 
 export const kakaoLogin = async (req: Request, res: Response) => {
   const { code } = req.body;
@@ -106,7 +105,7 @@ export const kakaoLogin = async (req: Request, res: Response) => {
           username,
           avatarUrl,
         };
-        res.json(user).end();
+        res.json(user.id).end();
       } else {
         const newUser = await User.create({
           email,
@@ -120,7 +119,7 @@ export const kakaoLogin = async (req: Request, res: Response) => {
           username,
           avatarUrl,
         };
-        res.json(newUser).end();
+        res.json(newUser.id).end();
       }
     }
   } catch (err) {
