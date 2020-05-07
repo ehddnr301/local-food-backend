@@ -6,7 +6,27 @@ import jwt from "jsonwebtoken";
 
 export const postJoin = (req: Request, res: Response) => "postJoin";
 export const postLogin = (req: Request, res: Response) => "postLogin";
-export const getUserInfo = (req: Request, res: Response) => "getUserInfo";
+export const getUserInfo = async (req: Request, res: Response) => {
+  const {
+    params: { id },
+  } = req;
+  try {
+    console.log("hi");
+    const user = await User.findById(id);
+    console.log(user);
+    // res
+    //   .status(200)
+    //   .json({
+    //     email: user.email,
+    //     username: user.username,
+    //     avatarUrl: user.avatarUrl,
+    //   })
+    //   .end();
+  } catch {
+    console.log("hiewe");
+    res.status(400).send("Cant find User").end();
+  }
+};
 export const putUserInfo = (req: Request, res: Response) => "putUserInfo";
 export const deleteUser = (req: Request, res: Response) => "deleteUser";
 
@@ -41,7 +61,6 @@ export const githubLogin = async (req: Request, res: Response) => {
       const user = await User.findOne({ email });
       console.log(user);
       if (user) {
-        res.json(user.id).end();
         const session = req.session;
         session.loginInfo = {
           id: user.id,
@@ -49,6 +68,7 @@ export const githubLogin = async (req: Request, res: Response) => {
           username,
           avatarUrl,
         };
+        res.json(session.loginInfo.id).end();
       }
     } else {
       const newUser = await User.create({
@@ -56,6 +76,7 @@ export const githubLogin = async (req: Request, res: Response) => {
         username,
         avatarUrl,
       });
+
       const session = req.session;
       session.loginInfo = {
         id: newUser.id,
@@ -63,7 +84,7 @@ export const githubLogin = async (req: Request, res: Response) => {
         username,
         avatarUrl,
       };
-      res.json(newUser.id).end();
+      res.json(session.loginInfo.id).end();
     }
   } catch (err) {
     console.log(err);
