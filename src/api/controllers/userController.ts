@@ -11,19 +11,16 @@ export const getUserInfo = async (req: Request, res: Response) => {
     params: { id },
   } = req;
   try {
-    console.log("hi");
     const user = await User.findById(id);
-    console.log(user);
-    // res
-    //   .status(200)
-    //   .json({
-    //     email: user.email,
-    //     username: user.username,
-    //     avatarUrl: user.avatarUrl,
-    //   })
-    //   .end();
+    res
+      .status(200)
+      .json({
+        email: user.email,
+        username: user.username,
+        avatarUrl: user.avatarUrl,
+      })
+      .end();
   } catch {
-    console.log("hiewe");
     res.status(400).send("Cant find User").end();
   }
 };
@@ -61,14 +58,14 @@ export const githubLogin = async (req: Request, res: Response) => {
       const user = await User.findOne({ email });
       console.log(user);
       if (user) {
-        const session = req.session;
-        session.loginInfo = {
-          id: user.id,
-          email,
-          username,
-          avatarUrl,
-        };
-        res.json(session.loginInfo.id).end();
+        // const session = req.session;
+        // session.loginInfo = {
+        //   id: user.id,
+        //   email,
+        //   username,
+        //   avatarUrl,
+        // };
+        // res.json(session.loginInfo.id).end();
       }
     } else {
       const newUser = await User.create({
@@ -133,13 +130,13 @@ export const kakaoLogin = async (req: Request, res: Response) => {
           username,
           avatarUrl,
         });
-        const session = req.session;
-        session.loginInfo = {
-          id: newUser.id,
-          email,
-          username,
-          avatarUrl,
-        };
+        // const session = req.session;
+        // session.loginInfo = {
+        //   id: newUser.id,
+        //   email,
+        //   username,
+        //   avatarUrl,
+        // };
         res.json(newUser.id).end();
       }
     }

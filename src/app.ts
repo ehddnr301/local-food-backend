@@ -1,4 +1,3 @@
-import path from "path";
 import express from "express";
 import morgan from "morgan";
 import helmet from "helmet";
@@ -11,7 +10,6 @@ import mongoose from "mongoose";
 import foodRouter from "./api/routers/foodRouter";
 import userRouter from "./api/routers/userRouter";
 import "./passport";
-import cors from "cors";
 
 const app = express();
 
