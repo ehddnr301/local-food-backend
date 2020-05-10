@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import passport from "passport";
 import session from "express-session";
 import mongoose from "mongoose";
-import foodRouter from "./api/routers/foodRouter";
+import foodRouter from "./api/routers/storeRouter";
 import userRouter from "./api/routers/userRouter";
 import "./passport";
 
@@ -41,7 +41,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // storeType 으로 음식점, 카페, 술집 분류 예정
-app.use("/food", foodRouter);
+app.use("/store", foodRouter);
 
 app.use("/user", userRouter);
 
