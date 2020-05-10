@@ -65,7 +65,7 @@ export const githubLogin = async (req: Request, res: Response) => {
         //   username,
         //   avatarUrl,
         // };
-        // res.json(session.loginInfo.id).end();
+        res.json(user.id).end();
       }
     } else {
       const newUser = await User.create({
@@ -74,14 +74,7 @@ export const githubLogin = async (req: Request, res: Response) => {
         avatarUrl,
       });
 
-      const session = req.session;
-      session.loginInfo = {
-        id: newUser.id,
-        email,
-        username,
-        avatarUrl,
-      };
-      res.json(session.loginInfo.id).end();
+      res.json(newUser.id).end();
     }
   } catch (err) {
     console.log(err);
@@ -116,13 +109,13 @@ export const kakaoLogin = async (req: Request, res: Response) => {
       const user = await User.findOne({ email });
       console.log(user);
       if (user) {
-        const session = req.session;
-        session.loginInfo = {
-          id: user.id,
-          email,
-          username,
-          avatarUrl,
-        };
+        // const session = req.session;
+        // session.loginInfo = {
+        //   id: user.id,
+        //   email,
+        //   username,
+        //   avatarUrl,
+        // };
         res.json(user.id).end();
       } else {
         const newUser = await User.create({
