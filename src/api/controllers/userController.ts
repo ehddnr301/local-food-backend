@@ -58,14 +58,17 @@ export const githubLogin = async (req: Request, res: Response) => {
       const user = await User.findOne({ email });
       console.log(user);
       if (user) {
-        // const session = req.session;
-        // session.loginInfo = {
-        //   id: user.id,
-        //   email,
-        //   username,
-        //   avatarUrl,
-        // };
-        res.json(user.id).end();
+        const session = req.session;
+        session.loginInfo = {
+          id: user.id,
+          email,
+          username,
+          avatarUrl,
+        };
+        // ! session을 추가하고 save를 해주어야 저장이 됩니다.
+        session.save(() => {
+          res.json(session.loginInfo.id).end();
+        });
       }
     } else {
       const newUser = await User.create({
@@ -74,7 +77,16 @@ export const githubLogin = async (req: Request, res: Response) => {
         avatarUrl,
       });
 
-      res.json(newUser.id).end();
+      const session = req.session;
+      session.loginInfo = {
+        id: newUser.id,
+        email,
+        username,
+        avatarUrl,
+      };
+      session.save(() => {
+        res.json(session.loginInfo.id).end();
+      });
     }
   } catch (err) {
     console.log(err);
@@ -109,28 +121,32 @@ export const kakaoLogin = async (req: Request, res: Response) => {
       const user = await User.findOne({ email });
       console.log(user);
       if (user) {
-        // const session = req.session;
-        // session.loginInfo = {
-        //   id: user.id,
-        //   email,
-        //   username,
-        //   avatarUrl,
-        // };
-        res.json(user.id).end();
+        const session = req.session;
+        session.loginInfo = {
+          id: user.id,
+          email,
+          username,
+          avatarUrl,
+        };
+        session.save(() => {
+          res.json(session.loginInfo.id).end();
+        });
       } else {
         const newUser = await User.create({
           email,
           username,
           avatarUrl,
         });
-        // const session = req.session;
-        // session.loginInfo = {
-        //   id: newUser.id,
-        //   email,
-        //   username,
-        //   avatarUrl,
-        // };
-        res.json(newUser.id).end();
+        const session = req.session;
+        session.loginInfo = {
+          id: newUser.id,
+          email,
+          username,
+          avatarUrl,
+        };
+        session.save(() => {
+          res.json(session.loginInfo.id).end();
+        });
       }
     }
   } catch (err) {
