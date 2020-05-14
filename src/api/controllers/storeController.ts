@@ -40,18 +40,28 @@ export const getAll = async (req: Request, res: Response) => {
   }
 };
 export const postStore = (req: Request, res: Response) => {
+  console.log(req.session.loginInfo);
   try {
     const {
       body: { storeName, storeType, location, description },
+      session: {
+        loginInfo: { id = null },
+      },
     } = req;
+    if (id) {
+      console.log(id);
+    }
     const newStore = Store.create({
       storeName,
       storeType,
       location,
       description,
+      creator: id,
     });
+    console.log(newStore);
     // User를 req에 담아야 유저생성이 자연스러울듯!
-  } catch {
+  } catch (error) {
+    console.log(error);
     res.status(400).end();
   }
 };
