@@ -30,15 +30,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   session({
     secret: process.env.COOKIE_SECRET,
-    resave: true,
-    saveUninitialized: false,
+    resave: false,
+    saveUninitialized: true,
     store: new CookieStore({ mongooseConnection: mongoose.connection }),
   })
 );
 app.use(morgan("dev"));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 // storeType 으로 음식점, 카페, 술집 분류 예정
 app.use("/store", storeRouter);

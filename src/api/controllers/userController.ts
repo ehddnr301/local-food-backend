@@ -1,27 +1,33 @@
 import { Request, Response, NextFunction } from "express";
-import passport from "passport";
 import User from "../models/User";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 
 export const postJoin = (req: Request, res: Response) => "postJoin";
 export const postLogin = (req: Request, res: Response) => "postLogin";
+
 export const getUserInfo = async (req: Request, res: Response) => {
   const {
-    params: { id },
+    body: { userId },
   } = req;
-  try {
-    const user = await User.findById(id);
-    res
-      .status(200)
-      .json({
-        email: user.email,
-        username: user.username,
-        avatarUrl: user.avatarUrl,
-      })
-      .end();
-  } catch {
-    res.status(400).send("Cant find User").end();
+  let decodedId;
+  decodedId = jwt.verify(userId, process.env.JWT_SECRET);
+  if (decodedId) {
+    try {
+      const user = await User.findById(decodedId.id);
+      res
+        .status(200)
+        .json({
+          email: user.email,
+          username: user.username,
+          avatarUrl: user.avatarUrl,
+        })
+        .end();
+    } catch {
+      res.status(400).send("Cant find User").end();
+    }
+  } else {
+    res.status(400).send("Can't find User").end();
   }
 };
 export const putUserInfo = (req: Request, res: Response) => "putUserInfo";
@@ -58,17 +64,13 @@ export const githubLogin = async (req: Request, res: Response) => {
       const user = await User.findOne({ email });
       console.log(user);
       if (user) {
-        const session = req.session;
-        session.loginInfo = {
-          id: user.id,
-          email,
-          username,
-          avatarUrl,
-        };
-        // ! session을 추가하고 save를 해주어야 저장이 됩니다.
-        session.save(() => {
-          res.json(session.loginInfo.id).end();
+        const id = user.id;
+        const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
+          expiresIn: "2h",
         });
+        res.cookie("user", jwtToken);
+        // res.status(200).json(user.id).end();
+        res.status(200).json(jwtToken).end();
       }
     } else {
       const newUser = await User.create({
@@ -76,17 +78,12 @@ export const githubLogin = async (req: Request, res: Response) => {
         username,
         avatarUrl,
       });
-
-      const session = req.session;
-      session.loginInfo = {
-        id: newUser.id,
-        email,
-        username,
-        avatarUrl,
-      };
-      session.save(() => {
-        res.json(session.loginInfo.id).end();
+      const id = newUser.id;
+      const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: "2h",
       });
+      res.cookie("user", jwtToken);
+      res.status(200).json(jwtToken).end();
     }
   } catch (err) {
     console.log(err);
@@ -121,32 +118,25 @@ export const kakaoLogin = async (req: Request, res: Response) => {
       const user = await User.findOne({ email });
       console.log(user);
       if (user) {
-        const session = req.session;
-        session.loginInfo = {
-          id: user.id,
-          email,
-          username,
-          avatarUrl,
-        };
-        session.save(() => {
-          res.json(session.loginInfo.id).end();
+        const id = user.id;
+        const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
+          expiresIn: "2h",
         });
+        res.cookie("user", jwtToken);
+        // res.status(200).json(user.id).end();
+        res.status(200).json(jwtToken).end();
       } else {
         const newUser = await User.create({
           email,
           username,
           avatarUrl,
         });
-        const session = req.session;
-        session.loginInfo = {
-          id: newUser.id,
-          email,
-          username,
-          avatarUrl,
-        };
-        session.save(() => {
-          res.json(session.loginInfo.id).end();
+        const id = newUser.id;
+        const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
+          expiresIn: "2h",
         });
+        res.cookie("user", jwtToken);
+        res.status(200).json(jwtToken).end();
       }
     }
   } catch (err) {

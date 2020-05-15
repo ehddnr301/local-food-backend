@@ -18,6 +18,7 @@ userRouter.post("/login", postLogin);
 
 // 유저를 제공합니다.
 userRouter.get("/:id", getUserInfo);
+userRouter.post("/me", getUserInfo);
 
 // 유저정보를 수정합니다. ex 위치?
 userRouter.put("/:id", putUserInfo);
