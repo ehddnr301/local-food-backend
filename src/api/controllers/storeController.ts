@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import Store from "../models/Store";
+import jwt from "jsonwebtoken";
 
 // TODO : naver api 에서 주소를 lang long 으로 변환하는것 구현
 
@@ -39,24 +40,19 @@ export const getAll = async (req: Request, res: Response) => {
     res.status(400).end();
   }
 };
-export const postStore = (req: Request, res: Response) => {
-  console.log(req.session.loginInfo);
+export const postStore = async (req: Request, res: Response) => {
   try {
     const {
-      body: { storeName, storeType, location, description },
-      session: {
-        loginInfo: { id = null },
-      },
+      body: { storeName, storeType, location, description, id },
     } = req;
-    if (id) {
-      console.log(id);
-    }
-    const newStore = Store.create({
+    let decodedId;
+    decodedId = jwt.verify(id, process.env.JWT_SECRET);
+    const newStore = await Store.create({
       storeName,
       storeType,
       location,
       description,
-      creator: id,
+      creator: decodedId.id,
     });
     console.log(newStore);
     // User를 req에 담아야 유저생성이 자연스러울듯!
