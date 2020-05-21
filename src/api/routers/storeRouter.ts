@@ -4,6 +4,7 @@ import {
   putStore,
   postStore,
   deleteStore,
+  getAllGeo,
 } from "../controllers/storeController";
 
 const storeRouter = express.Router();
@@ -19,5 +20,8 @@ storeRouter.put("/:id", putStore);
 
 // 값을 제거합니다.
 storeRouter.delete("/:id", deleteStore);
+
+// 위도 경도 얻기.
+storeRouter.get("/geoAll", getAllGeo);
 
 export default storeRouter;
