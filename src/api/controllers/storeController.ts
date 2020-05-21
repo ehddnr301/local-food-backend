@@ -60,17 +60,20 @@ export const getAllGeo = async (req: Request, res: Response) => {
         return response.data.addresses;
       })
     );
-    const xyCoodinate = result.map((r) => {
+    const xyCoordinate = result.map((r) => {
       if (r.length === 1) {
+        console.log(r);
         return [r[0].x, r[0].y];
       }
     });
-    res.status(200).json(xyCoodinate).end();
+    res.status(200).json(xyCoordinate).end();
   } catch (error) {
     console.log(error);
     res.status(400).end();
   }
 };
+
+// TODO : store 를 추가할때 x,y좌표를 변환해서 추가하자.
 export const postStore = async (req: Request, res: Response) => {
   try {
     const {

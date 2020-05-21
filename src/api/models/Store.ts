@@ -5,6 +5,8 @@ export interface IStore extends mongoose.Document {
   storeName: string;
   storeType: string;
   location: string;
+  xCoordinate: number;
+  yCoordinate: number;
   description: string;
   creator: IUser;
   createAt: Date;
