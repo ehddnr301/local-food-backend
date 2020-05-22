@@ -44,29 +44,7 @@ export const getAll = async (req: Request, res: Response) => {
 export const getAllGeo = async (req: Request, res: Response) => {
   try {
     const allStore = await Store.find({});
-    const locationArr = allStore.map((a) => a.location);
-    const encodedLocation = locationArr.map((location) => encodeURI(location));
-    const result = await Promise.all(
-      encodedLocation.map(async (loca) => {
-        const response = await axios.get(
-          `https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${loca}`,
-          {
-            headers: {
-              "X-NCP-APIGW-API-KEY-ID": process.env.NAVER_ID,
-              "X-NCP-APIGW-API-KEY": process.env.NAVER_SECRET,
-            },
-          }
-        );
-        return response.data.addresses;
-      })
-    );
-    const xyCoordinate = result.map((r) => {
-      if (r.length === 1) {
-        console.log(r);
-        return [r[0].x, r[0].y];
-      }
-    });
-    res.status(200).json(xyCoordinate).end();
+    res.status(200).json(allStore).end();
   } catch (error) {
     console.log(error);
     res.status(400).end();
@@ -79,13 +57,38 @@ export const postStore = async (req: Request, res: Response) => {
     const {
       body: { storeName, storeType, location, description, id },
     } = req;
+    // ID
     let decodedId;
     decodedId = jwt.verify(id, process.env.JWT_SECRET);
+
+    // location
+    const encodedLocation = encodeURI(location);
+    const response = await axios.get(
+      `https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${encodedLocation}`,
+      {
+        headers: {
+          "X-NCP-APIGW-API-KEY-ID": process.env.NAVER_ID,
+          "X-NCP-APIGW-API-KEY": process.env.NAVER_SECRET,
+        },
+      }
+    );
+    const addresses = response.data.addresses;
+    let xCoordinate;
+    let yCoordinate;
+    if (addresses.length === 1) {
+      console.log(addresses);
+      xCoordinate = addresses[0].x;
+      yCoordinate = addresses[0].y;
+      console.log(xCoordinate, yCoordinate);
+    }
+
     const newStore = await Store.create({
       storeName,
       storeType,
       location,
       description,
+      xCoordinate,
+      yCoordinate,
       creator: decodedId.id,
     });
     console.log(newStore);

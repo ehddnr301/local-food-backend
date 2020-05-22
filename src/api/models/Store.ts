@@ -35,6 +35,14 @@ const StoreSchema: mongoose.Schema<IStore> = new mongoose.Schema({
     default: Date.now,
     type: Date,
   },
+  xCoordinate: {
+    default: 0,
+    type: Number,
+  },
+  yCoordinate: {
+    default: 0,
+    type: Number,
+  },
   likes: {
     default: 0,
     type: Number,
