@@ -23,11 +23,11 @@ export const getCafes = async (req: Request, res: Response) => {
     res.status(400).end();
   }
 };
-export const getAlchols = async (req: Request, res: Response) => {
+export const getPubs = async (req: Request, res: Response) => {
   try {
     const allStore = await Store.find({});
-    const alcohols = allStore.filter((aS) => aS.storeType === "alcohol");
-    res.status(200).json(alcohols).end();
+    const pubs = allStore.filter((aS) => aS.storeType === "pub");
+    res.status(200).json(pubs).end();
   } catch {
     res.status(400).end();
   }
@@ -41,17 +41,16 @@ export const getAll = async (req: Request, res: Response) => {
     res.status(400).end();
   }
 };
-export const getAllGeo = async (req: Request, res: Response) => {
-  try {
-    const allStore = await Store.find({});
-    res.status(200).json(allStore).end();
-  } catch (error) {
-    console.log(error);
-    res.status(400).end();
-  }
-};
+// export const getAllGeo = async (req: Request, res: Response) => {
+//   try {
+//     const allStore = await Store.find({});
+//     res.status(200).json(allStore).end();
+//   } catch (error) {
+//     console.log(error);
+//     res.status(400).end();
+//   }
+// };
 
-// TODO : store 를 추가할때 x,y좌표를 변환해서 추가하자.
 export const postStore = async (req: Request, res: Response) => {
   try {
     const {
@@ -76,10 +75,8 @@ export const postStore = async (req: Request, res: Response) => {
     let xCoordinate;
     let yCoordinate;
     if (addresses.length === 1) {
-      console.log(addresses);
       xCoordinate = addresses[0].x;
       yCoordinate = addresses[0].y;
-      console.log(xCoordinate, yCoordinate);
     }
 
     const newStore = await Store.create({
@@ -91,7 +88,6 @@ export const postStore = async (req: Request, res: Response) => {
       yCoordinate,
       creator: decodedId.id,
     });
-    console.log(newStore);
   } catch (error) {
     console.log(error);
     res.status(400).end();

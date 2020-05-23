@@ -4,13 +4,18 @@ import {
   putStore,
   postStore,
   deleteStore,
-  getAllGeo,
+  getCafes,
+  getPubs,
+  getAll,
 } from "../controllers/storeController";
 
 const storeRouter = express.Router();
 
 // 리스트를 제공합니다.
-storeRouter.get("/list", getRestaurants);
+storeRouter.get("/list/restaurant", getRestaurants);
+storeRouter.get("/list/cafe", getCafes);
+storeRouter.get("/list/pub", getPubs);
+storeRouter.get("/list/all", getAll);
 
 // 리스트에 값을 추가합니다.
 storeRouter.post("/list", postStore);
@@ -21,7 +26,7 @@ storeRouter.put("/:id", putStore);
 // 값을 제거합니다.
 storeRouter.delete("/:id", deleteStore);
 
-// 위도 경도 얻기.
-storeRouter.get("/geoAll", getAllGeo);
+// 위도 경도 얻기
+// storeRouter.get("/geoAll", getAllGeo);
 
 export default storeRouter;
