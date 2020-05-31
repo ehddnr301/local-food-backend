@@ -10,24 +10,24 @@ export const getUserInfo = async (req: Request, res: Response) => {
   const {
     body: { userId },
   } = req;
-  let decodedId;
-  decodedId = jwt.verify(userId, process.env.JWT_SECRET);
-  if (decodedId) {
-    try {
-      const user = await User.findById(decodedId.id);
-      res
-        .status(200)
-        .json({
-          email: user.email,
-          username: user.username,
-          avatarUrl: user.avatarUrl,
-        })
-        .end();
-    } catch {
-      res.status(400).send("Cant find User").end();
+  try {
+    let decodedId;
+    decodedId = jwt.verify(userId, process.env.JWT_SECRET);
+    const user = await User.findById(decodedId.id);
+    res
+      .status(200)
+      .json({
+        email: user.email,
+        username: user.username,
+        avatarUrl: user.avatarUrl,
+      })
+      .end();
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      res.status(404).send("Token is Expired, Login again").end();
+    } else {
+      res.status(500).send("Something Wrong Try Again").end();
     }
-  } else {
-    res.status(400).send("Can't find User").end();
   }
 };
 export const putUserInfo = (req: Request, res: Response) => "putUserInfo";
