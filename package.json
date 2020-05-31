@@ -21,7 +21,7 @@
     "@types/passport-kakao": "^0.2.0",
     "@types/passport-local": "^1.0.33",
     "@types/passport-local-mongoose": "^4.0.13",
-    "axios": "0.18.0",
+    "axios": "0.18.1",
     "connect-mongo": "^3.2.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
