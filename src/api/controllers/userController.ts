@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import User from "../models/User";
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import jwtDecode from "jwt-decode";
 
 export const postJoin = (req: Request, res: Response) => "postJoin";
 export const postLogin = (req: Request, res: Response) => "postLogin";
@@ -33,6 +34,49 @@ export const getUserInfo = async (req: Request, res: Response) => {
 export const putUserInfo = (req: Request, res: Response) => "putUserInfo";
 export const deleteUser = (req: Request, res: Response) => "deleteUser";
 
+export const googleLogin = async (req: Request, res: Response) => {
+  const { code } = req.body;
+  const GOOGLE_ID = process.env.GOOGLE_ID;
+  const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
+  try {
+    const response = await axios.post(
+      `https://accounts.google.com/o/oauth2/token?grant_type=authorization_code&client_id=${GOOGLE_ID}&redirect_uri=${process.env.GOOGLE_CALLBACK}&code=${code}&client_secret=${GOOGLE_SECRET}`
+    );
+    console.log(response);
+    const id_token = response.data.id_token;
+    // console.log(id_token);
+    const { email } = jwtDecode(id_token);
+    console.log(email);
+    if (email) {
+      const user = await User.findOne({ email });
+      console.log(user);
+      if (user) {
+        const id = user.id;
+        const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
+          expiresIn: "2h",
+        });
+        res.cookie("user", jwtToken);
+        // res.status(200).json(user.id).end();
+        res.status(200).json(jwtToken).end();
+      } else {
+        const newUser = await User.create({
+          email,
+          username: "googleUser",
+          avatarUrl:
+            "https://cdn3.iconfinder.com/data/icons/basic-ui-element-s94-3/64/Basic_UI_Icon_Pack_-_Glyph_user-512.png",
+        });
+        const id = newUser.id;
+        const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
+          expiresIn: "2h",
+        });
+        res.cookie("user", jwtToken);
+        res.status(200).json(jwtToken).end();
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 // export const githubLogin = passport.authenticate("github");
 export const githubLogin = async (req: Request, res: Response) => {
   const { code } = req.body;

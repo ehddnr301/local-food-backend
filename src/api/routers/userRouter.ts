@@ -8,6 +8,7 @@ import {
   deleteUser,
   kakaoLogin,
   githubLogin,
+  googleLogin,
 } from "../controllers/userController";
 
 const userRouter = express.Router();
@@ -29,5 +30,7 @@ userRouter.delete("/:id", deleteUser);
 userRouter.post("/auth/github", githubLogin);
 
 userRouter.post("/auth/kakao", kakaoLogin);
+
+userRouter.post("/auth/google", googleLogin);
 
 export default userRouter;
