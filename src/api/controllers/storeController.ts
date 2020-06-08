@@ -41,15 +41,6 @@ export const getAll = async (req: Request, res: Response) => {
     res.status(400).end();
   }
 };
-// export const getAllGeo = async (req: Request, res: Response) => {
-//   try {
-//     const allStore = await Store.find({});
-//     res.status(200).json(allStore).end();
-//   } catch (error) {
-//     console.log(error);
-//     res.status(400).end();
-//   }
-// };
 
 export const postStore = async (req: Request, res: Response) => {
   try {
@@ -79,7 +70,7 @@ export const postStore = async (req: Request, res: Response) => {
       yCoordinate = addresses[0].y;
     }
 
-    const newStore = await Store.create({
+    await Store.create({
       storeName,
       storeType,
       location,
