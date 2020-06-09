@@ -3,8 +3,6 @@ import axios from "axios";
 import Store from "../models/Store";
 import jwt from "jsonwebtoken";
 
-// TODO : naver api 에서 주소를 lang long 으로 변환하는것 구현
-
 export const getRestaurants = async (req: Request, res: Response) => {
   try {
     const allStore = await Store.find({});
@@ -39,6 +37,42 @@ export const getAll = async (req: Request, res: Response) => {
     res.status(200).json(allStore).end();
   } catch {
     res.status(400).end();
+  }
+};
+
+export const reverseGeo = async (req: Request, res: Response) => {
+  try {
+    const {
+      body: { lat, lng },
+    } = req;
+    const response = await axios.get(
+      `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${lng},${lat}&output=json&orders=addr`,
+      {
+        headers: {
+          "X-NCP-APIGW-API-KEY-ID": process.env.NAVER_ID,
+          "X-NCP-APIGW-API-KEY": process.env.NAVER_SECRET,
+        },
+      }
+    );
+    if (response.status === 200) {
+      const area1 = response.data.results[0].region.area1.name;
+      const area2 = response.data.results[0].region.area2.name;
+      const area3 = response.data.results[0].region.area3.name;
+      const num1 = response.data.results[0].land.number1;
+      const num2 = response.data.results[0].land.number2;
+      console.log(area1, area2, area3, num1, num2);
+      if (num2 !== "") {
+        const address =
+          area1 + " " + area2 + " " + area3 + " " + num1 + "-" + num2;
+        res.status(200).json(address).end();
+      } else {
+        const address = area1 + " " + area2 + " " + area3 + " " + num1;
+        res.status(200).json(address).end();
+      }
+      // const {data: {results[0]: {region, land}}} = response;
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
 

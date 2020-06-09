@@ -7,6 +7,7 @@ import {
   getCafes,
   getPubs,
   getAll,
+  reverseGeo,
 } from "../controllers/storeController";
 
 const storeRouter = express.Router();
@@ -28,5 +29,8 @@ storeRouter.delete("/:id", deleteStore);
 
 // 위도 경도 얻기
 // storeRouter.get("/geoAll", getAllGeo);
+
+// 현재 좌표 를 주소로 변환
+storeRouter.post("/reverseGeo", reverseGeo);
 
 export default storeRouter;
