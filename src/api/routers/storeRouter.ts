@@ -8,6 +8,7 @@ import {
   getPubs,
   getAll,
   reverseGeo,
+  toggleLike,
 } from "../controllers/storeController";
 
 const storeRouter = express.Router();
@@ -27,8 +28,8 @@ storeRouter.put("/:id", putStore);
 // 값을 제거합니다.
 storeRouter.delete("/:id", deleteStore);
 
-// 위도 경도 얻기
-// storeRouter.get("/geoAll", getAllGeo);
+// 좋아요
+storeRouter.post("/toggleLike", toggleLike);
 
 // 현재 좌표 를 주소로 변환
 storeRouter.post("/reverseGeo", reverseGeo);

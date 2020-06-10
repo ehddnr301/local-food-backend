@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import axios from "axios";
 import Store from "../models/Store";
+import User from "../models/User";
 import jwt from "jsonwebtoken";
 
 export const getRestaurants = async (req: Request, res: Response) => {
@@ -37,6 +38,55 @@ export const getAll = async (req: Request, res: Response) => {
     res.status(200).json(allStore).end();
   } catch {
     res.status(400).end();
+  }
+};
+
+export const toggleLike = async (req: Request, res: Response) => {
+  try {
+    const {
+      body: {
+        store: { _id: id, likes },
+        userId,
+      },
+    } = req;
+    let decodedId;
+    decodedId = jwt.verify(userId, process.env.JWT_SECRET);
+    const user = await User.findById(decodedId.id);
+    const userLikeStore = user.likedStore;
+    // console.log(userLikeStore, id);
+    // console.log(userLikeStore.includes(id));
+    if (userLikeStore.includes(id)) {
+      const store = await Store.findOneAndUpdate(
+        { _id: id },
+        { likes: likes - 1 }
+      );
+      const newLikeStore = userLikeStore.filter((uls) => uls !== id);
+      await User.findOneAndUpdate(
+        { _id: decodedId.id },
+        { likedStore: newLikeStore }
+      );
+      store.save();
+    } else {
+      const store = await Store.findOneAndUpdate(
+        { _id: id },
+        { likes: likes + 1 }
+      );
+      userLikeStore.push(id);
+      await User.findOneAndUpdate(
+        { _id: decodedId.id },
+        { likedStore: userLikeStore }
+      );
+      user.save();
+      store.save();
+    }
+    console.log(await User.findById(decodedId.id));
+    console.log(await Store.findById(id));
+    // if(user.likedStore)
+    // console.log(user);
+    // console.log(user);
+    // console.log(await Store.findById(id));
+  } catch (error) {
+    console.log(error);
   }
 };
 

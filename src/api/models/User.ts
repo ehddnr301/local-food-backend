@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 import passportLocalMongoose from "passport-local-mongoose";
+import { IStore } from "./Store";
 
 export interface IUser extends mongoose.Document {
   _id: string;
   avatarUrl: string;
   email: string;
   username: string;
+  likedStore: string[];
 }
 
 const UserSchema: mongoose.PassportLocalSchema = new mongoose.Schema({
@@ -21,6 +23,7 @@ const UserSchema: mongoose.PassportLocalSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
     },
   ],
+  likedStore: [String],
 });
 
 UserSchema.plugin(passportLocalMongoose, { usernameField: "email" });
