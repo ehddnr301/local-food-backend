@@ -41,6 +41,7 @@ export const getAll = async (req: Request, res: Response) => {
   }
 };
 
+// * 담기
 export const toggleLike = async (req: Request, res: Response) => {
   try {
     const {
@@ -53,38 +54,24 @@ export const toggleLike = async (req: Request, res: Response) => {
     decodedId = jwt.verify(userId, process.env.JWT_SECRET);
     const user = await User.findById(decodedId.id);
     const userLikeStore = user.likedStore;
-    // console.log(userLikeStore, id);
-    // console.log(userLikeStore.includes(id));
     if (userLikeStore.includes(id)) {
-      const store = await Store.findOneAndUpdate(
-        { _id: id },
-        { likes: likes - 1 }
-      );
       const newLikeStore = userLikeStore.filter((uls) => uls !== id);
       await User.findOneAndUpdate(
         { _id: decodedId.id },
         { likedStore: newLikeStore }
       );
-      store.save();
+      user.save();
+      res.status(200).json("OUT").end();
     } else {
-      const store = await Store.findOneAndUpdate(
-        { _id: id },
-        { likes: likes + 1 }
-      );
       userLikeStore.push(id);
       await User.findOneAndUpdate(
         { _id: decodedId.id },
         { likedStore: userLikeStore }
       );
       user.save();
-      store.save();
+      res.status(200).json("IN").end();
     }
     console.log(await User.findById(decodedId.id));
-    console.log(await Store.findById(id));
-    // if(user.likedStore)
-    // console.log(user);
-    // console.log(user);
-    // console.log(await Store.findById(id));
   } catch (error) {
     console.log(error);
   }
