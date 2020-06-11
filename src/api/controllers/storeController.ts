@@ -41,6 +41,24 @@ export const getAll = async (req: Request, res: Response) => {
   }
 };
 
+export const getLikedStore = async (req: Request, res: Response) => {
+  try {
+    const {
+      body: { userId },
+    } = req;
+    let decodedId;
+    decodedId = jwt.verify(userId, process.env.JWT_SECRET);
+    // TODO: likedStore를 Store로 만들어서 populate쓰는게 나을까..?
+    const user = await User.findById(decodedId.id);
+    const lStore = user.likedStore;
+    const userLikedStore = lStore.map(async (s) => await Store.findById(s));
+    console.log(userLikedStore);
+    res.status(200).json(userLikedStore).end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // * 담기
 export const toggleLike = async (req: Request, res: Response) => {
   try {
