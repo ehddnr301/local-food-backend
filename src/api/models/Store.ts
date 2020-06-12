@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { IUser } from "./User";
 
 export interface IStore extends mongoose.Document {
+  [x: string]: any;
   storeName: string;
   storeType: string;
   location: string;

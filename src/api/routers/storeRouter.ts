@@ -9,6 +9,7 @@ import {
   getAll,
   reverseGeo,
   toggleLike,
+  getLikedStore,
 } from "../controllers/storeController";
 
 const storeRouter = express.Router();
@@ -18,6 +19,7 @@ storeRouter.get("/list/restaurant", getRestaurants);
 storeRouter.get("/list/cafe", getCafes);
 storeRouter.get("/list/pub", getPubs);
 storeRouter.get("/list/all", getAll);
+storeRouter.post("/list/like", getLikedStore);
 
 // 리스트에 값을 추가합니다.
 storeRouter.post("/list", postStore);

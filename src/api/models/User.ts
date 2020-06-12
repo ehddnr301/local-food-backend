@@ -7,7 +7,7 @@ export interface IUser extends mongoose.Document {
   avatarUrl: string;
   email: string;
   username: string;
-  likedStore: string[];
+  stores: IStore;
 }
 
 const UserSchema: mongoose.PassportLocalSchema = new mongoose.Schema({
@@ -17,13 +17,12 @@ const UserSchema: mongoose.PassportLocalSchema = new mongoose.Schema({
     required: "Username is required",
     type: String,
   },
-  store: [
+  stores: [
     {
       ref: "Store",
       type: mongoose.Schema.Types.ObjectId,
     },
   ],
-  likedStore: [String],
 });
 
 UserSchema.plugin(passportLocalMongoose, { usernameField: "email" });

@@ -49,11 +49,12 @@ export const getLikedStore = async (req: Request, res: Response) => {
     let decodedId;
     decodedId = jwt.verify(userId, process.env.JWT_SECRET);
     // TODO: likedStore를 Store로 만들어서 populate쓰는게 나을까..?
-    const user = await User.findById(decodedId.id);
-    const lStore = user.likedStore;
-    const userLikedStore = lStore.map(async (s) => await Store.findById(s));
-    console.log(userLikedStore);
-    res.status(200).json(userLikedStore).end();
+    const user = await User.findById(decodedId.id).populate("store");
+    console.log(user);
+    // const lStore = user.likedStore;
+    // const userLikedStore = lStore.map(async (s) => await Store.findById(s));
+    // console.log(userLikedStore);
+    // res.status(200).json(userLikedStore).end();
   } catch (error) {
     console.log(error);
   }
@@ -71,25 +72,15 @@ export const toggleLike = async (req: Request, res: Response) => {
     let decodedId;
     decodedId = jwt.verify(userId, process.env.JWT_SECRET);
     const user = await User.findById(decodedId.id);
-    const userLikeStore = user.likedStore;
-    if (userLikeStore.includes(id)) {
-      const newLikeStore = userLikeStore.filter((uls) => uls !== id);
-      await User.findOneAndUpdate(
-        { _id: decodedId.id },
-        { likedStore: newLikeStore }
-      );
+    if (user.stores.includes(id)) {
+      user.stores.pull(id);
       user.save();
       res.status(200).json("OUT").end();
     } else {
-      userLikeStore.push(id);
-      await User.findOneAndUpdate(
-        { _id: decodedId.id },
-        { likedStore: userLikeStore }
-      );
+      user.stores.push(id);
       user.save();
       res.status(200).json("IN").end();
     }
-    console.log(await User.findById(decodedId.id));
   } catch (error) {
     console.log(error);
   }
