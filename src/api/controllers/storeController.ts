@@ -49,12 +49,19 @@ export const getLikedStore = async (req: Request, res: Response) => {
     let decodedId;
     decodedId = jwt.verify(userId, process.env.JWT_SECRET);
     // TODO: likedStore를 Store로 만들어서 populate쓰는게 나을까..?
-    const user = await User.findById(decodedId.id).populate("store");
-    console.log(user);
-    // const lStore = user.likedStore;
-    // const userLikedStore = lStore.map(async (s) => await Store.findById(s));
-    // console.log(userLikedStore);
-    // res.status(200).json(userLikedStore).end();
+    const user = await User.findById(decodedId.id).populate({
+      model: "Store",
+      path: "stores",
+    });
+    const storeArr = user.stores.map((store) => {
+      return {
+        name: store.storeName,
+        type: store.storeType,
+        location: store.location,
+        description: store.description,
+      };
+    });
+    res.status(200).json(storeArr).end();
   } catch (error) {
     console.log(error);
   }
