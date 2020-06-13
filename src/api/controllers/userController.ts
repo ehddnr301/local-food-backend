@@ -4,6 +4,8 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
 
+// TODO : 유저 이메일이 제공되지 않을경우 에러처리 ex) github
+
 export const postJoin = (req: Request, res: Response) => "postJoin";
 export const postLogin = (req: Request, res: Response) => "postLogin";
 

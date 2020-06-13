@@ -4,6 +4,8 @@ import Store from "../models/Store";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
 
+// TODO : 자기 위치 근처의 정보들 얻기도 만들기
+
 export const getRestaurants = async (req: Request, res: Response) => {
   try {
     const allStore = await Store.find({});
@@ -48,7 +50,6 @@ export const getLikedStore = async (req: Request, res: Response) => {
     } = req;
     let decodedId;
     decodedId = jwt.verify(userId, process.env.JWT_SECRET);
-    // TODO: likedStore를 Store로 만들어서 populate쓰는게 나을까..?
     const user = await User.findById(decodedId.id).populate({
       model: "Store",
       path: "stores",
@@ -67,6 +68,7 @@ export const getLikedStore = async (req: Request, res: Response) => {
   }
 };
 
+// TODO : like수 조절하기.
 // * 담기
 export const toggleLike = async (req: Request, res: Response) => {
   try {
