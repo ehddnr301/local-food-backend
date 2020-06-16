@@ -136,6 +136,8 @@ export const postStore = async (req: Request, res: Response) => {
     const {
       body: { storeName, storeType, location, description, id },
     } = req;
+    console.log(storeType);
+    console.log(location);
     // ID
     let decodedId;
     decodedId = jwt.verify(id, process.env.JWT_SECRET);
@@ -157,17 +159,20 @@ export const postStore = async (req: Request, res: Response) => {
     if (addresses.length === 1) {
       xCoordinate = addresses[0].x;
       yCoordinate = addresses[0].y;
-    }
 
-    await Store.create({
-      storeName,
-      storeType,
-      location,
-      description,
-      xCoordinate,
-      yCoordinate,
-      creator: decodedId.id,
-    });
+      await Store.create({
+        storeName,
+        storeType,
+        location,
+        description,
+        xCoordinate,
+        yCoordinate,
+        creator: decodedId.id,
+      });
+      res.status(200).json("Success").end();
+    } else {
+      res.status(400).json("Fail").end();
+    }
   } catch (error) {
     console.log(error);
     res.status(400).end();
