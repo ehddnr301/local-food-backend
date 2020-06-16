@@ -143,6 +143,9 @@ export const postStore = async (req: Request, res: Response) => {
     decodedId = jwt.verify(id, process.env.JWT_SECRET);
 
     // location
+    // TODO : naver 문의 하였습니다.
+    // * 경기도 부천시 원미구 역곡1동 역곡로 99-21 은 실패
+    // * 역곡로 99-21 은 성공
     const encodedLocation = encodeURI(location);
     const response = await axios.get(
       `https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${encodedLocation}`,
@@ -153,6 +156,7 @@ export const postStore = async (req: Request, res: Response) => {
         },
       }
     );
+    console.log(response);
     const addresses = response.data.addresses;
     let xCoordinate;
     let yCoordinate;
