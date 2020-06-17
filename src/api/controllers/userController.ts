@@ -6,6 +6,11 @@ import jwtDecode from "jwt-decode";
 
 // TODO : 유저 이메일이 제공되지 않을경우 에러처리 ex) github
 
+const loginError = (error: Error, res: Response) => {
+  console.log(error);
+  res.status(400).json("loginFail").end();
+};
+
 export const postJoin = (req: Request, res: Response) => "postJoin";
 export const postLogin = (req: Request, res: Response) => "postLogin";
 
@@ -55,7 +60,7 @@ export const googleLogin = async (req: Request, res: Response) => {
       if (user) {
         const id = user.id;
         const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
-          expiresIn: "2h",
+          expiresIn: "4h",
         });
         res.cookie("user", jwtToken);
         // res.status(200).json(user.id).end();
@@ -69,13 +74,14 @@ export const googleLogin = async (req: Request, res: Response) => {
         });
         const id = newUser.id;
         const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
-          expiresIn: "2h",
+          expiresIn: "4h",
         });
         res.cookie("user", jwtToken);
         res.status(200).json(jwtToken).end();
       }
     }
   } catch (error) {
+    loginError(error, res);
     console.log(error);
   }
 };
@@ -112,7 +118,7 @@ export const githubLogin = async (req: Request, res: Response) => {
       if (user) {
         const id = user.id;
         const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
-          expiresIn: "2h",
+          expiresIn: "4h",
         });
         res.cookie("user", jwtToken);
         // res.status(200).json(user.id).end();
@@ -126,12 +132,14 @@ export const githubLogin = async (req: Request, res: Response) => {
       });
       const id = newUser.id;
       const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: "2h",
+        expiresIn: "4h",
       });
       res.cookie("user", jwtToken);
       res.status(200).json(jwtToken).end();
     }
   } catch (err) {
+    loginError(err, res);
+
     console.log(err);
   }
 };
@@ -166,7 +174,7 @@ export const kakaoLogin = async (req: Request, res: Response) => {
       if (user) {
         const id = user.id;
         const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
-          expiresIn: "2h",
+          expiresIn: "4h",
         });
         res.cookie("user", jwtToken);
         // res.status(200).json(user.id).end();
@@ -179,13 +187,15 @@ export const kakaoLogin = async (req: Request, res: Response) => {
         });
         const id = newUser.id;
         const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
-          expiresIn: "2h",
+          expiresIn: "4h",
         });
         res.cookie("user", jwtToken);
         res.status(200).json(jwtToken).end();
       }
     }
   } catch (err) {
+    loginError(err, res);
+
     console.log(err);
   }
 };
