@@ -114,7 +114,6 @@ export const githubLogin = async (req: Request, res: Response) => {
     });
     if (email) {
       const user = await User.findOne({ email });
-      console.log(user);
       if (user) {
         const id = user.id;
         const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -123,19 +122,19 @@ export const githubLogin = async (req: Request, res: Response) => {
         res.cookie("user", jwtToken);
         // res.status(200).json(user.id).end();
         res.status(200).json(jwtToken).end();
+      } else {
+        const newUser = await User.create({
+          email,
+          username,
+          avatarUrl,
+        });
+        const id = newUser.id;
+        const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
+          expiresIn: "4h",
+        });
+        res.cookie("user", jwtToken);
+        res.status(200).json(jwtToken).end();
       }
-    } else {
-      const newUser = await User.create({
-        email,
-        username,
-        avatarUrl,
-      });
-      const id = newUser.id;
-      const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: "4h",
-      });
-      res.cookie("user", jwtToken);
-      res.status(200).json(jwtToken).end();
     }
   } catch (err) {
     loginError(err, res);
@@ -164,13 +163,14 @@ export const kakaoLogin = async (req: Request, res: Response) => {
         properties: { nickname: username },
         kakao_account: {
           email,
-          profile: { profile_image_url: avatarUrl },
+          profile: {
+            profile_image_url: avatarUrl = "https://iupac.org/wp-content/uploads/2018/05/default-avatar.png",
+          },
         },
       },
     } = profileRequest;
     if (email) {
       const user = await User.findOne({ email });
-      console.log(user);
       if (user) {
         const id = user.id;
         const jwtToken = jwt.sign({ id }, process.env.JWT_SECRET, {
